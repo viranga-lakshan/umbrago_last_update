@@ -1,0 +1,165 @@
+﻿ @using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model?.Name ?? "Footer Header"</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .footer-header {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 60px 20px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            overflow: hidden;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .footer-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        /* Triangular Overlay */
+        .triangular-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 300px 150px 0;
+            z-index: 2;
+            opacity: 0.8;
+        }
+        
+        .footer-header-content {
+            position: relative;
+            z-index: 3;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .footer-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .footer-header p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.95;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer-header-btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+
+        .footer-header-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .footer-header-btn:active {
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            .footer-header {
+                padding: 40px 20px;
+                min-height: 300px;
+            }
+
+            .footer-header h1 {
+                font-size: 2rem;
+            }
+            
+            .footer-header p {
+                font-size: 1rem;
+            }
+
+            .triangular-overlay {
+                border-width: 0 150px 75px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="footer-header" @if (Model?.Value("backgroundImage") != null) { style="background-image: url('@Model.Value("backgroundImage")?')" }>
+        
+        <!-- Triangular Overlay with Dynamic Color from Eye Dropper -->
+        @if (Model?.Value("triangularOverlayColor") != null)
+        {
+            <div class="triangular-overlay" style="border-color: transparent @Model.Value("triangularOverlayColor") @Model.Value("triangularOverlayColor") transparent;"></div>
+        }
+        
+        <div class="footer-header-content">
+            
+            <!-- Heading Text Property -->
+            @if (!string.IsNullOrEmpty(Model?.Value<string>("headingText")))
+            {
+                <h1>@Model.Value("headingText")</h1>
+            }
+            
+            <!-- Description Text Property -->
+            @if (!string.IsNullOrEmpty(Model?.Value<string>("descriptionText")))
+            {
+                <p>@Model.Value("descriptionText")</p>
+            }
+
+            <!-- Button with Text and URL Properties -->
+            @if (!string.IsNullOrEmpty(Model?.Value<string>("buttonText")) && !string.IsNullOrEmpty(Model?.Value<string>("buttonUrl")))
+            {
+                <a href="@Model.Value("buttonUrl")" class="footer-header-btn" target="_blank" rel="noopener noreferrer">
+                    @Model.Value("buttonText")
+                </a>
+            }
+        </div>
+    </section>
+</body>
+</html>
