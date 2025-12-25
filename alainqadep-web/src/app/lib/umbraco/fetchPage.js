@@ -45,6 +45,29 @@ export async function getVisitPage(language = 'en') {
 }
 
 /**
+ * Fetch galleries & collections page content by language via API route
+ * @param {string} language - Language code ('en' or 'ar')
+ */
+export async function getGalleriesCollectionsPage(language = 'en') {
+  try {
+    const res = await fetch(`/api/umbraco/galleries-collections?language=${language}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      console.error(`Fetch failed for galleries-collections page (${language})`, res.status);
+      return null;
+    }
+
+    const data = await res.json();
+    return data || null;
+  } catch (error) {
+    console.error('Error fetching galleries-collections page:', error);
+    return null;
+  }
+}
+
+/**
  * Generic function to fetch any page type
  * @param {string} type - Page type identifier
  * @param {string} language - Language code
@@ -55,6 +78,9 @@ export async function fetchPageByType(type, language = 'en') {
   }
   if (type === 'visit') {
     return getVisitPage(language);
+  }
+  if (type === 'galleries-collections') {
+    return getGalleriesCollectionsPage(language);
   }
 
   console.warn(`Page type "${type}" not yet implemented`);

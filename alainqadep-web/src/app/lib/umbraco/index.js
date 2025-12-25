@@ -5,7 +5,12 @@
 // Use this file to import functions in your components and pages.
 
 // API Layer - Page fetchers
-export { fetchPageByType, getHomePage, getVisitPage } from './fetchPage';
+export {
+  fetchPageByType,
+  getHomePage,
+  getVisitPage,
+  getGalleriesCollectionsPage,
+} from './fetchPage';
 
 // NavBar Mappers
 export { fetchNavBarByLanguage, mapNavBarData } from './navbar.mapper';
@@ -26,7 +31,15 @@ export {
   getTicketsOpeningHoursFromVisitPage,
   getGettingHereFromVisitPage,
   getVisitorFacilitiesFromVisitPage,
+  getVisitorGuidelinesFromVisitPage,
 } from './visit.mapper';
+
+// Galleries & Collections Page Mappers
+export {
+  getHeroSectionFromGalleriesPage,
+  getBreadcrumbNavFromGalleriesPage,
+  getAlAinGalleriesSectionFromGalleriesPage,
+} from './galleries-collections.mapper';
 
 // Footer Page Mappers
 export { getFooterPage, getFooterDataFromPage } from './footer.mapper';

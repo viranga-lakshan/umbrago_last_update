@@ -7,6 +7,9 @@ export default function VisitorServiceGroup({ data }) {
 
   const { title, description, backgroundColor, imageCards } = data;
 
+  console.log('[VisitorServiceGroup] Data received:', data);
+  console.log('[VisitorServiceGroup] Image cards:', imageCards);
+
   return (
     <section className="py-12 px-6" style={{ backgroundColor: backgroundColor || '#e9e9e9' }}>
       <div className="max-w-7xl mx-auto">
@@ -31,13 +34,14 @@ export default function VisitorServiceGroup({ data }) {
               <div key={index} className="flex flex-col">
                 {/* Image */}
                 {card.image && (
-                  <div className="relative w-full h-[250px] mb-4 overflow-hidden">
+                  <div className="relative w-full h-[250px] mb-4 overflow-hidden rounded-lg">
                     <Image
                       src={card.image}
                       alt={card.title || `Service image ${index + 1}`}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      unoptimized
                     />
                   </div>
                 )}

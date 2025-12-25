@@ -7,10 +7,16 @@ import {
   getVisitHeroSectionFromVisitPage,
   getBreadcrumbNavFromVisitPage,
   getTicketsOpeningHoursFromVisitPage,
+  getGettingHereFromVisitPage,
+  getVisitorFacilitiesFromVisitPage,
+  getVisitorGuidelinesFromVisitPage,
 } from '../../lib/umbraco';
-import VisitPageHeroSection from '../../visit/components/VisitPageHeroSection';
+import PageHeroSection from '../../components/PageHeroSection';
 import BreadcrumbNav from '../../components/BreadcrumbNav';
-import TicketsAndOpeningHoursSection from '../../visit/components/TicketsAndOpeningHoursSection';
+import TicketsAndOpeningHoursSection from './components/TicketsAndOpeningHoursSection';
+import GettingHereSection from '../../components/GettingHereSection';
+import VisitorFacilitiesSection from './components/VisitorFacilitiesSection';
+import VisitorGuidelinesSection from './components/VisitorGuidelinesSection';
 
 export default function VisitPage({ params }) {
   const { language, setLanguage } = useLanguage();
@@ -85,12 +91,26 @@ export default function VisitPage({ params }) {
   const heroData = visitPage ? getVisitHeroSectionFromVisitPage(visitPage) : null;
   const breadcrumbData = visitPage ? getBreadcrumbNavFromVisitPage(visitPage) : null;
   const ticketsData = visitPage ? getTicketsOpeningHoursFromVisitPage(visitPage) : null;
+  const gettingHereData = visitPage ? getGettingHereFromVisitPage(visitPage) : null;
+  const visitorFacilitiesData = visitPage ? getVisitorFacilitiesFromVisitPage(visitPage) : null;
+  const visitorGuidelinesData = visitPage ? getVisitorGuidelinesFromVisitPage(visitPage) : null;
 
   return (
     <main>
-      {heroData && <VisitPageHeroSection heroData={heroData} />}
+      {heroData && <PageHeroSection heroData={heroData} />}
       {breadcrumbData && <BreadcrumbNav {...breadcrumbData} />}
       {ticketsData && <TicketsAndOpeningHoursSection data={ticketsData} />}
+      {gettingHereData && (
+        <GettingHereSection
+          smallTitle={gettingHereData.smallTitle}
+          mainTitle={gettingHereData.mainTitle}
+          transportOptions={gettingHereData.transportOptions || []}
+          googleMapEmbed={gettingHereData.googleMapEmbed}
+          backgroundColor={gettingHereData.backgroundColor}
+        />
+      )}
+      {visitorFacilitiesData && <VisitorFacilitiesSection data={visitorFacilitiesData} />}
+      {visitorGuidelinesData && <VisitorGuidelinesSection data={visitorGuidelinesData} />}
     </main>
   );
 }

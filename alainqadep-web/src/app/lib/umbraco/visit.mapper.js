@@ -189,44 +189,119 @@ export function getVisitorFacilitiesFromVisitPage(visitPage) {
   console.log('[Mapper] Extracted title:', title);
   console.log('[Mapper] Extracted sectionIntro:', sectionIntro);
 
-  // Extract service groups
+  // Extract service groups and individual services
   const sectionItems = props.sections?.items || [];
-  const serviceGroups = sectionItems.map(item => {
-    const groupProps = item.content?.properties || {};
-    const groupTitle = stripHtml(groupProps.groupTitle?.markup || groupProps.groupTitle) || '';
-    const services = groupProps.services || '';
-    const groupBackgroundColor = groupProps.backgroundColor || '#e9e9e9';
+  const serviceGroups = [];
+  const individualServices = [];
 
-    // Extract image cards
-    const imageCartItems = groupProps.imagecart?.items || [];
-    const imageCards = imageCartItems.map(cardItem => {
-      const cardProps = cardItem.content?.properties || {};
-      const imageTitle = stripHtml(cardProps.imageTitle?.markup || cardProps.imageTitle) || '';
-      const images = cardProps.image || [];
+  sectionItems.forEach(item => {
+    const contentType = item.content?.contentType;
+
+    if (contentType === 'visitorServicesGroup') {
+      // Handle service groups (with image cards)
+      const groupProps = item.content?.properties || {};
+      const groupTitle = stripHtml(groupProps.groupTitle?.markup || groupProps.groupTitle) || '';
+      const services = groupProps.services || '';
+      const groupBackgroundColor = groupProps.backgroundColor || '#e9e9e9';
+
+      // Extract image cards
+      const imageCartItems = groupProps.imagecart?.items || [];
+      const imageCards = imageCartItems.map(cardItem => {
+        const cardProps = cardItem.content?.properties || {};
+        const imageTitle = stripHtml(cardProps.imageTitle?.markup || cardProps.imageTitle) || '';
+        const images = cardProps.image || [];
+        const imageUrl = images[0]?.url || null;
+
+        return {
+          title: imageTitle,
+          image: imageUrl ? getMediaUrl(imageUrl) : null,
+          width: images[0]?.width || 0,
+          height: images[0]?.height || 0,
+        };
+      });
+
+      serviceGroups.push({
+        type: 'serviceGroup',
+        title: groupTitle,
+        description: services,
+        backgroundColor: groupBackgroundColor,
+        imageCards,
+      });
+    } else if (contentType === 'services') {
+      // Handle individual services
+      const serviceProps = item.content?.properties || {};
+      const serviceTitle = stripHtml(serviceProps.title?.markup || serviceProps.title) || '';
+      const serviceDescription = serviceProps.description || '';
+      const images = serviceProps.image || [];
       const imageUrl = images[0]?.url || null;
+      const serviceBackgroundColor = serviceProps.backgroundColor || '#ffffff';
 
-      return {
-        title: imageTitle,
+      individualServices.push({
+        type: 'service',
+        title: serviceTitle,
+        description: serviceDescription,
         image: imageUrl ? getMediaUrl(imageUrl) : null,
-        width: images[0]?.width || 0,
-        height: images[0]?.height || 0,
-      };
-    });
-
-    return {
-      title: groupTitle,
-      description: services,
-      backgroundColor: groupBackgroundColor,
-      imageCards,
-    };
+        backgroundColor: serviceBackgroundColor,
+      });
+    }
   });
 
   console.log('[Mapper] Service groups count:', serviceGroups.length);
+  console.log('[Mapper] Individual services count:', individualServices.length);
 
   return {
     title,
     sectionIntro,
     backgroundColor,
     serviceGroups,
+    individualServices,
+  };
+}
+
+/**
+ * Get Visitor Guidelines Section data from Visit Page
+ */
+export function getVisitorGuidelinesFromVisitPage(visitPage) {
+  if (!visitPage?.properties?.visitPageSection?.items) {
+    console.log('[Mapper] No visitPageSection.items found');
+    return null;
+  }
+
+  const items = visitPage.properties.visitPageSection.items;
+  const guidelinesItem = items.find(item => item.content?.contentType === 'visitorGuidelines');
+
+  if (!guidelinesItem?.content?.properties) {
+    console.log('[Mapper] No guidelinesItem found');
+    return null;
+  }
+
+  const props = guidelinesItem.content.properties;
+
+  const eyebrowLabel =
+    stripHtml(props.eyebrowLabel?.markup || props.eyebrowLabel) || 'VISITOR GUIDELINES';
+  const title = stripHtml(props.title?.markup || props.title) || '';
+  const bodyText = stripHtml(props.bodyText?.markup || props.bodyText) || '';
+  const buttonLabel = stripHtml(props.buttonLabel?.markup || props.buttonLabel) || 'Guidelines';
+
+  // Extract button link
+  let buttonLink = '';
+  if (props.buttonLink?.markup) {
+    const linkMatch = props.buttonLink.markup.match(/href="([^"]+)"/);
+    buttonLink = linkMatch ? linkMatch[1] : '';
+  }
+
+  // Extract side image
+  const images = props.sideImage || [];
+  const imageUrl = images[0]?.url || null;
+  const backgroundColor = props.backgroundColor || '#ebebeb';
+
+  return {
+    eyebrowLabel,
+    title,
+    bodyText,
+    buttonLabel,
+    buttonLink,
+    sideImage: imageUrl ? getMediaUrl(imageUrl) : null,
+    backgroundColor,
   };
 }
